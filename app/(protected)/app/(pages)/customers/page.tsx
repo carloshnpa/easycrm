@@ -6,8 +6,10 @@ import {NewCustomerButton} from "@/app/(protected)/app/(pages)/customers/compone
 import Filter from "@/app/(protected)/app/(pages)/customers/components/(list)/filters";
 import {Input} from "@/components/ui/input";
 import {EmailSender} from "@/app/(protected)/app/(pages)/customers/components/(form)/email-writer-form";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import CustomersTable from "@/app/(protected)/app/(pages)/customers/components/(list)/customers-table";
+import ButtonExcelExport from "@/components/app/export/button-excel-export";
+import {createClient} from "@/utils/supabase/client";
 
 
 interface IEmailProps {
@@ -15,18 +17,80 @@ interface IEmailProps {
     email: string
 }
 
+interface ICustomer {
+    id: string
+    name: string
+    phone: string
+    email: string
+    role: string
+    tags: any
+    stage: string,
+    clients_company?: {
+        name?: string
+    }
+}
+
 export default function Customers() {
 
     const [showEmail, setShowEmail] = useState<boolean>(false)
+    const [showEdit, setShowEdit] = useState<boolean>(false)
     const [emailPros, setEmailProps] = useState<IEmailProps>({
         name: "",
         email: "",
-
     })
+    const [loading, setLoading] = useState<boolean>(true)
+    const supabase = createClient()
+    const [customers, setCustomers] = useState<ICustomer[]>([])
+    const [offsetTable, setOffsetTable] = useState<number>(0)
+    const columns = [
+        {value: "name", columnName: "Name"},
+        {value: "phone", columnName: "Phone Num"},
+        {value: "email", columnName: "Email"},
+        {value: "role", columnName: "Role"},
+        {value: "tags", columnName: "Tags"},
+        {value: "stage", columnName: "Stage"},
+        {value: "company", columnName: "Company"}
+    ]
+    const tableRows = 20
+    const getCustomers = async () => {
+        setLoading(true)
+        const {
+            data: {user},
+        } = await supabase.auth.getUser()
+
+        if (user) {
+
+            const {data, error, status} = await supabase
+                .from('clients')
+                .select(`*, clients_company(*)`)
+                .eq('user_id', user?.id)
+                .range((offsetTable * tableRows), (offsetTable + 1) * tableRows)
+
+            setCustomers(data?.map(x => x as ICustomer) ?? [])
+            setLoading(false)
+        }
+    }
+
+    useEffect(() => {
+        getCustomers()
+    }, [])
+
+    const prepareExportData = () => {
+        return customers.map((cons) => {
+            return {
+                ...cons,
+                tags: cons.tags?.tags.join(',')
+            }
+        })
+    }
+
     const filterItems = (event: any) => {
         console.log(event)
     }
 
+    const openEditDialog = (customerId: string) => {
+        console.log(customerId)
+    }
 
     function openEmailDialog(props: IEmailProps) {
         setEmailProps(props)
@@ -62,15 +126,23 @@ export default function Customers() {
                             </div>
                             <div className="flex items-center gap-4 mr-2">
                                 <Filter></Filter>
-                                <Button variant="outline" size="sm">
-                                    <Icons.DownloadIcon className="h-4 w-4 mr-2"/>
-                                    Export
-                                </Button>
+                                <ButtonExcelExport
+                                    columnNames={columns.map(c => c.columnName)}
+                                    rows={prepareExportData()}
+                                    sheetName={"Customers"}
+                                    filename={"ExportCustomers.xlsx"}
+                                />
                             </div>
                             <NewCustomerButton/>
                         </div>
                     </div>
-                    <CustomersTable openEmailDialog={(props) => openEmailDialog(props)}/>
+                    <CustomersTable
+                        customers={customers}
+                        columns={columns.map(c => c.columnName)}
+                        loading={loading}
+                        openEmailDialog={(props) => openEmailDialog(props)}
+                        openEditDialog={(clientId: string) => openEditDialog(clientId)}
+                    />
                 </div>
             </div>
         </main>

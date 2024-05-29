@@ -33,6 +33,19 @@ const FormSchema = z.object({
     }),
 })
 
+const industrySegments = [
+    {value: "technology", label: "Technology"},
+    {value: "finance", label: "Finance"},
+    {value: "energy", label: "Energy"},
+    {value: "construction", label: "Construction"},
+    {value: "transportation", label: "Transportation"},
+    {value: "healthcare", label: "Healthcare"},
+    {value: "sales", label: "Sales"},
+    {value: "food", label: "Food"},
+    {value: "retail", label: "Retail"},
+    {value: "other", label: "Other"},
+]
+
 
 export default function CreateCustomerForm() {
     const supabase = createClient()
@@ -63,10 +76,11 @@ export default function CreateCustomerForm() {
                 if (customer.error) throw customer.error
 
                 toast({
-                    title: "Yeah! Custumer inserted.",
+                    title: "Yeah! Customer inserted.",
                     description: "Send an email ; )",
                 })
 
+                form.reset()
             }
         } catch (e) {
             toast({
@@ -101,7 +115,8 @@ export default function CreateCustomerForm() {
                                         name="customer.name"
                                         render={({field}) => (
                                             <FormItem>
-                                                <FormLabel>Name*</FormLabel>
+                                                <FormLabel>Name <span
+                                                    className="text-red-600">*</span></FormLabel>
                                                 <FormControl>
                                                     <Input  {...field} />
                                                 </FormControl>
@@ -117,7 +132,8 @@ export default function CreateCustomerForm() {
                                         name="customer.email"
                                         render={({field}) => (
                                             <FormItem>
-                                                <FormLabel>Email*</FormLabel>
+                                                <FormLabel>Email <span
+                                                    className="text-red-600">*</span></FormLabel>
                                                 <FormControl>
                                                     <Input  {...field} />
                                                 </FormControl>
@@ -210,7 +226,8 @@ export default function CreateCustomerForm() {
                                         name="customer.stage"
                                         render={({field}) => (
                                             <FormItem>
-                                                <FormLabel>Customer Stage</FormLabel>
+                                                <FormLabel>Customer Stage <span
+                                                    className="text-red-600">*</span></FormLabel>
                                                 <Select onValueChange={field.onChange}>
                                                     <FormControl>
                                                         <SelectTrigger>
@@ -237,7 +254,8 @@ export default function CreateCustomerForm() {
                                         name="company.name"
                                         render={({field}) => (
                                             <FormItem>
-                                                <FormLabel>Company Name*</FormLabel>
+                                                <FormLabel>Company Name <span
+                                                    className="text-red-600">*</span></FormLabel>
                                                 <FormControl>
                                                     <Input  {...field} />
                                                 </FormControl>
@@ -295,11 +313,15 @@ export default function CreateCustomerForm() {
                                                         </SelectTrigger>
                                                     </FormControl>
                                                     <SelectContent>
-                                                        <SelectItem value="technology">Technology</SelectItem>
-                                                        <SelectItem value="finance">Finance</SelectItem>
-                                                        <SelectItem value="healthcare">Healthcare</SelectItem>
-                                                        <SelectItem value="retail">Retail</SelectItem>
-                                                        <SelectItem value="other">Other</SelectItem>
+                                                        {industrySegments.map((x) => {
+                                                            return (
+                                                                <SelectItem
+                                                                    key={"seg_" + x.value}
+                                                                    value={x.value}
+                                                                >{x.label}
+                                                                </SelectItem>
+                                                            )
+                                                        })}
                                                     </SelectContent>
                                                     <FormMessage/>
                                                 </Select>

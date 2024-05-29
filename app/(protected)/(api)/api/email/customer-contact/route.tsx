@@ -19,6 +19,7 @@ export async function POST(request: Request) {
             from: `${senderInfo.name} <contato@carlosabreu.com.br>`,
             to: [req.email],
             subject: req.subject,
+
             html: EmailContactTemplate({
                 companyName: senderInfo.company,
                 content: content,
