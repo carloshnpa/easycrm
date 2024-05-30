@@ -24,8 +24,8 @@ export default function Campaigns() {
     const supabase = createClient()
     const router = useRouter()
 
-    const dispatchCampaign = (campaignId: string) => {
-        console.log(campaignId)
+    const dispatchCampaign = () => {
+        console.log(campaignPreview)
     }
 
     const handlePreview = async (campaignId: string) => {

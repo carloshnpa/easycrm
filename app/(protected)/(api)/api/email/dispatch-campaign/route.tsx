@@ -2,7 +2,7 @@ import {Resend} from "resend";
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export default async function POST(request: Request) {
+export async function POST(request: Request) {
     const req = await request.json()
     const {campaignId, emails, html, subject} = req
     try {
@@ -19,8 +19,9 @@ export default async function POST(request: Request) {
                 }
             ]
         });
+        return Response.json("ok");
     } catch (e) {
-        console.error(e)
+        return Response.json({e}, {status: 500});
     }
 
 }
