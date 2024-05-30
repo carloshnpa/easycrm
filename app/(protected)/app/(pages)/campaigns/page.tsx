@@ -1,5 +1,5 @@
 'use client'
-import {EyeIcon, FileIcon, PenIcon, TrashIcon} from "lucide-react";
+import {EyeIcon, FileIcon, PenIcon, PlusCircle, TrashIcon} from "lucide-react";
 import {Separator} from "@/components/ui/separator";
 import {Button} from "@/components/ui/button";
 import * as React from "react";
@@ -11,6 +11,7 @@ import {useRouter} from "next/navigation";
 import {ScrollArea} from "@/components/ui/scroll-area";
 import Preview from "@/app/(protected)/app/(pages)/campaigns/components/preview";
 import {toast} from "@/components/ui/use-toast";
+import Link from "next/link";
 
 export default function Campaigns() {
 
@@ -22,6 +23,10 @@ export default function Campaigns() {
     const [loadingCreate, setLoadingCreate] = useState<boolean>(false)
     const supabase = createClient()
     const router = useRouter()
+
+    const dispatchCampaign = (campaignId: string) => {
+        console.log(campaignId)
+    }
 
     const handlePreview = async (campaignId: string) => {
         setLoadingCampaignPreview(true)
@@ -108,6 +113,21 @@ export default function Campaigns() {
                         <div className="flex-1 overflow-auto p-2">
                             <h2 className="">Select Your Campaign</h2>
                             <Separator className='my-2'/>
+                            <div className="flex py-2">
+                                <div className="ml-auto">
+                                    <Button size="sm" className="h-7 gap-1" disabled={loadingCreate}
+                                            onClick={() => createCampaign()}>
+                                        {loadingCreate ? (
+                                            <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
+                                        ) : (<PlusCircle className="h-3.5 w-3.5"/>)}
+                                        <span className="sr-only sm:not-sr-only sm:whitespace-nowrap">
+                                            Create Campaign
+                                          </span>
+                                    </Button>
+
+                                </div>
+                            </div>
+
                             {loading ? <div className="flex-1 align-middle justify-center flex p-5">
                                     <Icons.spinner className="mr-2 h-10 w-10 animate-spin"/>
                                 </div> :
@@ -126,14 +146,16 @@ export default function Campaigns() {
                                                     </a>
                                                     <div
                                                         className="grid-cols-3 gap-2 flex align-middle my-auto mr-2">
-                                                        <Button className={"w-4 h-4 p-0"} variant={"outline"}
+                                                        <Button className={"w-5 h-5 p-0"} variant={"outline"}
                                                                 onClick={() => handlePreview(campaign.id)}>
                                                             <EyeIcon className={"w-3 h-3"}/>
                                                         </Button>
-                                                        <Button className={"w-4 h-4 p-0"} variant={"outline"}>
-                                                            <PenIcon className={"w-3 h-3"}/>
+                                                        <Button className={"w-5 h-5 p-0"} variant={"outline"}>
+                                                            <Link href={"/app/campaigns/" + campaign.id}>
+                                                                <PenIcon className={"w-3 h-3"}/>
+                                                            </Link>
                                                         </Button>
-                                                        <Button className={"w-4 h-4 p-0"} variant={"outline"}
+                                                        <Button className={"w-5 h-5 p-0"} variant={"outline"}
                                                                 onClick={() => handleDeleteCampaign(campaign.id)}>
                                                             {loadingDelete === campaign.id ?
                                                                 <Icons.spinner className="h-3 w-3 animate-spin"/> :
@@ -153,13 +175,11 @@ export default function Campaigns() {
                     <div className="w-full">
                         <div className="flex">
                             <div className="ml-auto">
-
-                                <Button disabled={loadingCreate} onClick={() => createCampaign()} className="">
-                                    {loadingCreate && (
-                                        <Icons.spinner className="mr-2 h-4 w-4 animate-spin"/>
-                                    )}
-                                    Create Campaign
-                                </Button>
+                                {campaignPreview && (
+                                    <Button onClick={() => dispatchCampaign()} className="">
+                                        Dispatch Campaign
+                                    </Button>
+                                )}
                             </div>
                         </div>
                         <div className="flex">

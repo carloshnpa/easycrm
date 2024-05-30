@@ -1,5 +1,7 @@
 import Link from "next/link";
-import {HomeIcon, LineChartIcon, SettingsIcon, ShoppingBagIcon, UsersIcon} from "lucide-react";
+import {HomeIcon, MailCheckIcon, SettingsIcon, ShoppingBagIcon, UsersIcon} from "lucide-react";
+import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
 
 export default function SideBar() {
     return (
@@ -14,7 +16,7 @@ export default function SideBar() {
                     <nav className="grid items-start px-4 text-sm font-medium">
                         <Link
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                            href="#"
+                            href="/app"
                         >
                             <HomeIcon className="h-4 w-4"/>
                             Home
@@ -28,6 +30,13 @@ export default function SideBar() {
                         </Link>
                         <Link
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                            href="/app/campaigns"
+                        >
+                            <MailCheckIcon className="h-4 w-4"/>
+                            Campaigns
+                        </Link>
+                        <Link
+                            className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                             href="/app/products"
                         >
                             <ShoppingBagIcon className="h-4 w-4"/>
@@ -35,10 +44,10 @@ export default function SideBar() {
                         </Link>
                         <Link
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
-                            href="#"
+                            href="/app/sales"
                         >
-                            <LineChartIcon className="h-4 w-4"/>
-                            Analytics
+                            <ShoppingBagIcon className="h-4 w-4"/>
+                            Sales
                         </Link>
                         <Link
                             className="flex items-center gap-3 rounded-lg px-3 py-2 text-gray-500 transition-all hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
@@ -50,17 +59,17 @@ export default function SideBar() {
                     </nav>
                 </div>
                 <div className="mt-auto p-4">
-                    {/*<Card>*/}
-                    {/*    <CardHeader className="pb-4">*/}
-                    {/*        <CardTitle>Upgrade to Pro</CardTitle>*/}
-                    {/*        <CardDescription>Unlock all features and get unlimited access to our support team</CardDescription>*/}
-                    {/*    </CardHeader>*/}
-                    {/*    <CardContent>*/}
-                    {/*        <Button className="w-full" size="sm">*/}
-                    {/*            Upgrade*/}
-                    {/*        </Button>*/}
-                    {/*    </CardContent>*/}
-                    {/*</Card>*/}
+                    <Card>
+                        <CardHeader className="pb-4">
+                            <CardTitle>Upgrade to Pro</CardTitle>
+                            <CardDescription>Unlock all features</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <Button className="w-full" size="sm">
+                                Upgrade
+                            </Button>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </div>

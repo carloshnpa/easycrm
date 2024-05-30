@@ -11,7 +11,7 @@ export default function RootLayout({
 }>) {
     return (
         <>
-            <div className="grid min-h-screen w-full lg:grid-cols-[200px_1fr]">
+            <div className="grid min-h-screen w-full lg:grid-cols-[280px_1fr]">
                 <SideBar/>
                 <div className="flex flex-col">
                     <NavBar/>

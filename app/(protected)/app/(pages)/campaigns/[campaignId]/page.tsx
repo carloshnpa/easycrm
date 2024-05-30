@@ -6,8 +6,10 @@ import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Label} from "@/components/ui/label";
 import {createClient} from "@/utils/supabase/client";
-import {Tables} from "@/lib/database.types";
 import {toast} from "@/components/ui/use-toast";
+import {useRouter} from "next/navigation";
+import {ArrowBigLeftDashIcon} from "lucide-react";
+import {ScrollArea} from "@/components/ui/scroll-area";
 
 export const dynamic = 'force-dynamic'
 // @ts-ignore
@@ -15,15 +17,15 @@ export default function Page({params}) {
     const campaignId = params.campaignId
     const [loading, setLoading] = useState<boolean>(false)
     const [campaignName, setCampaignName] = useState<string | null>("")
-    const [campaign, setCampaign] = useState<Tables<'campaigns'>>()
     const emailEditorRef = useRef(null);
     const supabase = createClient()
+    const router = useRouter()
+
     const getCampaign = async () => {
         try {
             const {data} = await supabase.from('campaigns').select().eq('id', campaignId).single()
             if (data) {
                 setCampaignName(data.name)
-                setCampaign(data)
                 //@ts-ignore
                 emailEditorRef?.current.editor.loadDesign(data.json || {});
             }
@@ -64,17 +66,9 @@ export default function Page({params}) {
 
     const onLoad = async () => {
         await getCampaign()
-        // console.log('onLoad', campaign)
-        // @ts-ignore
-
-        // editor instance is created
-        // you can load your template here;
-        // const templateJson = {};
-        // emailEditorRef.current.editor.loadDesign(templateJson);
     }
 
     const onReady = () => {
-        // editor is ready
         console.log('onReady');
     };
 
@@ -84,7 +78,15 @@ export default function Page({params}) {
                 alignItems: 'end'
             }}>
                 <div className="container mx-auto grid grid-cols-12 gap-6">
-                    <div className="flex-1 col-span-10">
+                    <div className="flex col-span-2 items-end">
+                        <Button onClick={() => {
+                            router.push("/app/campaigns")
+                        }}>
+                            <ArrowBigLeftDashIcon/>
+                            Back
+                        </Button>
+                    </div>
+                    <div className="flex-1 col-span-8">
                         <Label htmlFor="campaigns-name">Campaigns Name</Label>
                         <Input className="flex h-10 w-full rounded-md border border-input bg-background"
                                value={campaignName ?? ""}
@@ -97,13 +99,14 @@ export default function Page({params}) {
                 </div>
 
             </div>
-
-            <EmailEditor
-                style={{minHeight: 900}}
-                ref={emailEditorRef}
-                onLoad={onLoad}
-                onReady={onReady}
-            />
+            <ScrollArea className={"h-[700px]"}>
+                <EmailEditor
+                    style={{minHeight: 900}}
+                    ref={emailEditorRef}
+                    onLoad={onLoad}
+                    onReady={onReady}
+                />
+            </ScrollArea>
         </>
     )
 }
